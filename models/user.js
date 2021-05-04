@@ -1,5 +1,7 @@
 const { Schema, model } = require('mongoose');
 const { isEmail } = require('validator');
+const bcrypt = require('bcryptjs');
+const CastError = require('../errors/cast-err');
 
 const userSchema = new Schema({
   email: {
@@ -23,5 +25,23 @@ const userSchema = new Schema({
     maxLength: [30, 'Максимальное кол-во символов 30']
   }
 })
+
+userSchema.statics.findUserByCredentials = function(email, password) {
+  return this.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        throw new CastError('Неправильные почта или пароль', 401);
+      }
+
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            throw new CastError('Неправильные почта или пароль', 401);
+          }
+
+          return user;
+        });
+    });
+};
 
 module.exports = model('user', userSchema);
