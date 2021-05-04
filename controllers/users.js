@@ -7,7 +7,7 @@ const CastError = require('../errors/cast-err');
 const createUser = (req, res, next) => {
   const data = { ...req.body };
 
-  if (!data.email || !data.password) {
+  if (!data.email || !data.password || !data.name) {
     throw new CastError('Переданы некорректные данные при создании юзера.', 400);
   }
 
@@ -16,8 +16,6 @@ const createUser = (req, res, next) => {
     .then((user) => res.status(201).send({
       _id: user._id,
       name: user.name,
-      about: user.about,
-      avatar: user.avatar,
       email: user.email,
     }))
     .catch((err) => {
@@ -69,9 +67,52 @@ const successfulAuth = (req, res) => {
   res.send({ massege: 'Пользователь авторизован!' });
 };
 
+const getUser = (req, res, next) => {
+  User.findById(req.user._id, { __v: 0 })
+    .then((user) => {
+      if (!user) {
+        throw new CastError('Вы не авторизованы', 401);
+      }
+      res.status(200).send(user);
+    })
+    .catch(next);
+};
+
+const updateUser = (req, res, next) => {
+  const data = { ...req.body };
+  if (!data.name || !data.email) {
+    throw new CastError('Переданы некорректные данные.', 400);
+  }
+
+  if (req.user._id.length !== 24) {
+    throw new CastError('Переданы некорректные данные.', 400);
+  }
+
+  User.findByIdAndUpdate(
+    req.user._id,
+    data,
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
+    .then((user) => {
+      if (!user) {
+        throw new CastError('Пользователь по указанному _id не найден.', 404);
+      }
+      res.status(201).send({
+        name: user.name,
+        email: user.email,
+      });
+    })
+    .catch(next);
+};
+
 module.exports = {
   createUser,
   login,
   signOut,
   successfulAuth,
+  getUser,
+  updateUser,
 }
