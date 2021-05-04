@@ -1,7 +1,9 @@
 const { NODE_ENV, DATABASE_URL } = process.env;
 
 const dataBaseUrl =
-  NODE_ENV === 'production' ? DATABASE_URL : 'mongodb://localhost:27017/bitfilmsdb';
+  NODE_ENV === 'production'
+    ? DATABASE_URL
+    : 'mongodb://localhost:27017/movie-explorer-db';
 
 const dataBaseOptions = {
   useNewUrlParser: true,
@@ -13,4 +15,4 @@ const dataBaseOptions = {
 module.exports = {
   dataBaseUrl,
   dataBaseOptions,
-}
+};
