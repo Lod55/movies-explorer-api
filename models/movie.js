@@ -1,50 +1,51 @@
 const { Schema, model } = require('mongoose');
-const { isUrl } = require('validator');
+
+const urlRegEx = /^(https?:\/\/)(www\.)?([\da-z-.]+)\.([a-z.]{2,6})[\da-zA-Z-._~:?#[\]@!$&'()*+,;=/]*\/?#?$/;
 
 const movieSchema = new Schema({
   country: {
     type: String,
-    required: true
+    required: true,
   },
   director: {
     type: String,
-    required: true
+    required: true,
   },
   duration: {
     type: Number,
-    required: true
+    required: true,
   },
   year: {
     type: String,
-    required: true
+    required: true,
   },
   description: {
     type: String,
-    required: true
+    required: true,
   },
   image: {
     type: String,
     required: true,
     validate: {
-      validator: (v) => isUrl(v),
+      validator: (v) => urlRegEx.test(v),
       message: 'Неправильный формат Url',
-    }
+    },
   },
   trailer: {
     type: String,
     required: true,
     validate: {
-      validator: (v) => isUrl(v),
+      validator: (v) => urlRegEx.test(v),
       message: 'Неправильный формат Url',
-    }
+    },
   },
   thumbnail: {
     type: String,
     required: true,
     validate: {
-      validator: (v) => isUrl(v),
+      validator: (v) => urlRegEx.test(v),
       message: 'Неправильный формат Url',
-    }
+    },
   },
   owner: {
     type: Schema.Types.ObjectId,
@@ -52,17 +53,21 @@ const movieSchema = new Schema({
     required: true,
   },
   movieId: {
-    type: String,
-    required: true
+    type: Number,
+    required: true,
   },
   nameRU: {
     type: String,
-    required: true
+    required: true,
   },
   nameEN: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 })
 
 module.exports = model('movie', movieSchema);

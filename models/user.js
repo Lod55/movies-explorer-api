@@ -11,7 +11,7 @@ const userSchema = new Schema({
     validate: {
       validator: (v) => isEmail(v),
       message: 'Неправильный формат Email',
-    }
+    },
   },
   password: {
     type: String,
@@ -22,8 +22,12 @@ const userSchema = new Schema({
     type: String,
     required: true,
     minLength: [2, 'Минимальное кол-во символов 2'],
-    maxLength: [30, 'Максимальное кол-во символов 30']
-  }
+    maxLength: [30, 'Максимальное кол-во символов 30'],
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 })
 
 userSchema.statics.findUserByCredentials = function(email, password) {

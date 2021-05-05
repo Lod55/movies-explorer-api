@@ -68,23 +68,22 @@ const successfulAuth = (req, res) => {
 };
 
 const getUser = (req, res, next) => {
-  User.findById(req.user._id, { __v: 0 })
+  User.findById(req.user._id)
     .then((user) => {
       if (!user) {
         throw new CastError('Вы не авторизованы', 401);
       }
-      res.status(200).send(user);
+      res.status(200).send({
+        name: user.name,
+        email: user.email,
+      });
     })
     .catch(next);
 };
 
 const updateUser = (req, res, next) => {
   const data = { ...req.body };
-  if (!data.name || !data.email) {
-    throw new CastError('Переданы некорректные данные.', 400);
-  }
-
-  if (req.user._id.length !== 24) {
+  if (!data) {
     throw new CastError('Переданы некорректные данные.', 400);
   }
 
@@ -105,7 +104,20 @@ const updateUser = (req, res, next) => {
         email: user.email,
       });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        const massage = `${Object.values(err.errors).map((el) => el.message).join(', ')}`;
+        const errorCustom = new CastError(massage, 400);
+        next(errorCustom);
+      }
+      if (err.name === 'MongoError' && err.code === 11000) {
+        const errorCustom = new CastError('Данный Email уже используется', 409);
+        next(errorCustom);
+      }
+      if (err.code === 500) {
+        next(err);
+      }
+    });
 };
 
 module.exports = {
