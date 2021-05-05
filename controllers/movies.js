@@ -51,11 +51,11 @@ const deleteMovieById = (req, res, next) => {
   Movie.findOne({ owner: req.user._id, movieId })
     .then((movie) => {
       if (!movie) {
-        throw new CastError('Фильм с указанным _id не найден.', 404);
+        throw new CastError('Фильм с указанным id не найден.', 404);
       }
 
       if (movie.owner.toString() !== req.user._id.toString()) {
-        throw new CastError('Фильм другого пользователя удалить нельзя!', 400);
+        throw new CastError('Фильм другого пользователя удалить нельзя!', 403);
       }
 
       Movie.deleteOne(movie)
