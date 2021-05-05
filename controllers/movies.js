@@ -18,7 +18,7 @@ const createMovie = (req, res, next) => {
 
   let owner;
 
-  User.findById(req.user._id)
+  User.findById(req.user._id, { __v: 0, createdAt: 0 })
     .then((user) => {
       if (!user) {
         throw new CastError('Пользователь по указанному _id не найден.', 404);
