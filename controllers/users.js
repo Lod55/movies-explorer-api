@@ -1,31 +1,45 @@
-const { NODE_ENV, JWT_SECRET } = process.env;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const CastError = require('../errors/cast-err');
+const {
+  messages,
+  secretKey,
+} = require('../configs/index');
+const {
+  BadRequestError,
+  NotFoundError,
+  ConflictError,
+  UnauthorizedError,
+} = require('../errors/index');
 
 const createUser = (req, res, next) => {
   const data = { ...req.body };
 
   if (!data.email || !data.password || !data.name) {
-    throw new CastError('Переданы некорректные данные при создании юзера.', 400);
+    throw new BadRequestError(messages.badRequest);
   }
 
   bcrypt.hash(data.password, 10)
-    .then((hash) => User.create({ ...data, password: hash }))
-    .then((user) => res.status(201).send({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
+    .then((hash) => User.create({
+      ...data,
+      password: hash,
     }))
+    .then((user) => res.status(201)
+      .send({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        const massage = `${Object.values(err.errors).map((el) => el.message).join(', ')}`;
-        const errorCustom = new CastError(massage, 400);
+        const massage = `${Object.values(err.errors)
+          .map((el) => el.message)
+          .join(', ')}`;
+        const errorCustom = new BadRequestError(massage);
         next(errorCustom);
       }
       if (err.name === 'MongoError' && err.code === 11000) {
-        const errorCustom = new CastError('Данный Email уже зарегистрирован', 409);
+        const errorCustom = new ConflictError(messages.user.conflict);
         next(errorCustom);
       }
       if (err.code === 500) {
@@ -38,42 +52,47 @@ const login = (req, res, next) => {
   const data = { ...req.body };
 
   if (!data.email || !data.password) {
-    throw new CastError('Переданы некорректные данные.', 400);
+    throw new BadRequestError(messages.badRequest);
   }
 
   return User.findUserByCredentials(data.email, data.password)
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        secretKey,
         { expiresIn: '24h' },
       );
 
       res.cookie(
         'jwt',
         token,
-        { maxAge: 3600000 * 24, httpOnly: true, sameSite: true },
+        {
+          maxAge: 3600000 * 24,
+          httpOnly: true,
+          sameSite: true,
+        },
       )
-        .send({ message: 'Авторизация прошла успешно!' });
+        .send({ message: messages.authorization.successfully });
     })
     .catch(next);
 };
 
 const signOut = (req, res) => {
-  res.clearCookie('jwt').send({ message: 'cookie удалена!' });
+  res.clearCookie('jwt')
+    .send({ message: messages.logout });
 };
 
 const successfulAuth = (req, res) => {
-  res.send({ massege: 'Пользователь авторизован!' });
+  res.send({ massege: messages.authorization.status.success });
 };
 
 const getUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw new CastError('Вы не авторизованы', 401);
+        throw new UnauthorizedError(messages.authorization.unsuccessful);
       }
-      res.status(200).send({
+      res.send({
         name: user.name,
         email: user.email,
       });
@@ -84,7 +103,7 @@ const getUser = (req, res, next) => {
 const updateUser = (req, res, next) => {
   const data = { ...req.body };
   if (!data) {
-    throw new CastError('Переданы некорректные данные.', 400);
+    throw new BadRequestError(messages.badRequest);
   }
 
   User.findByIdAndUpdate(
@@ -97,21 +116,24 @@ const updateUser = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new CastError('Пользователь по указанному _id не найден.', 404);
+        throw new NotFoundError(messages.user.notFound);
       }
-      res.status(201).send({
-        name: user.name,
-        email: user.email,
-      });
+      res.status(201)
+        .send({
+          name: user.name,
+          email: user.email,
+        });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        const massage = `${Object.values(err.errors).map((el) => el.message).join(', ')}`;
-        const errorCustom = new CastError(massage, 400);
+        const massage = `${Object.values(err.errors)
+          .map((el) => el.message)
+          .join(', ')}`;
+        const errorCustom = new BadRequestError(massage);
         next(errorCustom);
       }
       if (err.name === 'MongoError' && err.code === 11000) {
-        const errorCustom = new CastError('Данный Email уже используется', 409);
+        const errorCustom = new ConflictError(messages.user.conflict);
         next(errorCustom);
       }
       if (err.code === 500) {

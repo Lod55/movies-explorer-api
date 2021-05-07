@@ -1,20 +1,23 @@
-const { NODE_ENV, JWT_SECRET } = process.env;
 const jwt = require('jsonwebtoken');
-const CastError = require('../errors/cast-err');
+const { UnauthorizedError } = require('../errors/index');
+const {
+  messages,
+  secretKey,
+} = require('../configs/index');
 
 const auth = (req, res, next) => {
   const token = req.cookies.jwt;
 
   if (!token) {
-    throw new CastError('Необходимо авторизоваться', 401);
+    throw new UnauthorizedError(messages.authorization.unsuccessful);
   }
 
   let payload;
 
   try {
-    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
+    payload = jwt.verify(token, secretKey);
   } catch (err) {
-    const castError = new CastError('Авторизация не пройдена', 401);
+    const castError = new UnauthorizedError(messages.authorization.fail);
     next(castError);
   }
 

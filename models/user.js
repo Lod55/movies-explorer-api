@@ -1,28 +1,32 @@
-const { Schema, model } = require('mongoose');
+const {
+  Schema,
+  model,
+} = require('mongoose');
 const { isEmail } = require('validator');
 const bcrypt = require('bcryptjs');
-const CastError = require('../errors/cast-err');
+const { messages } = require('../configs/index');
+const { UnauthorizedError } = require('../errors/index');
 
 const userSchema = new Schema({
   email: {
     type: String,
-    unique: true,
-    required: true,
+    unique: [true, messages.models.unique],
+    required: [true, messages.models.required],
     validate: {
       validator: (v) => isEmail(v),
-      message: 'Неправильный формат Email',
+      message: messages.models.format('Email'),
     },
   },
   password: {
     type: String,
-    required: true,
+    required: [true, messages.models.required],
     select: false,
   },
   name: {
     type: String,
-    required: true,
-    minLength: [2, 'Минимальное кол-во символов 2'],
-    maxLength: [30, 'Максимальное кол-во символов 30'],
+    required: [true, messages.models.required],
+    minLength: [2, messages.models.minLength(2)],
+    maxLength: [30, messages.models.maxLength(30)],
   },
   createdAt: {
     type: Date,
@@ -31,16 +35,17 @@ const userSchema = new Schema({
 });
 
 userSchema.statics.findUserByCredentials = function authorization(email, password) {
-  return this.findOne({ email }).select('+password')
+  return this.findOne({ email })
+    .select('+password')
     .then((user) => {
       if (!user) {
-        throw new CastError('Неправильные почта или пароль', 401);
+        throw new UnauthorizedError(messages.authorization.badDate);
       }
 
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new CastError('Неправильные почта или пароль', 401);
+            throw new UnauthorizedError(messages.authorization.badDate);
           }
 
           return user;

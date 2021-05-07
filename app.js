@@ -1,16 +1,24 @@
-require('dotenv').config();
+require('dotenv')
+  .config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
+
 const router = require('./routers');
-const limiter = require('./middlewares/limiter');
-const corsOrigin = require('./middlewares/cors');
-const { dataBaseUrl, dataBaseOptions } = require('./configs/databaseConfig');
-const errorHandler = require('./middlewares/error-handler');
-const { requestLogger, errorLogger } = require('./middlewares/logger');
+const {
+  dataBaseUrl,
+  dataBaseOptions,
+} = require('./configs/index');
+const {
+  errorHandler,
+  corsOrigin,
+  requestLogger,
+  limiter,
+  errorLogger,
+} = require('./middlewares/index');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -24,9 +32,9 @@ try {
 app.use(helmet());
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.use(corsOrigin);
 
 app.use(requestLogger);
+app.use(corsOrigin);
 app.use(limiter);
 app.use(router);
 app.use(errorLogger);

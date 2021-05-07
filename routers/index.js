@@ -1,12 +1,15 @@
-const router = require('express').Router();
-const auth = require('../middlewares/auth');
-const CastError = require('../errors/cast-err');
+const router = require('express')
+  .Router();
 const usersRouter = require('./users');
 const moviesRouter = require('./movies');
+const { NotFoundError } = require('../errors/index');
+const { messages } = require('../configs/index');
 const {
+  auth,
   createUserValidator,
   loginValidator,
-} = require('../middlewares/validators/usersValidators');
+} = require('../middlewares/index');
+
 const {
   createUser,
   login,
@@ -23,7 +26,7 @@ router.use('/users', auth, usersRouter);
 router.use('/movies', auth, moviesRouter);
 
 router.use('*', auth, (res, req, next) => {
-  const castError = new CastError('Данный запрос не найден', 404);
+  const castError = new NotFoundError(messages.server.notFound);
   next(castError);
 });
 

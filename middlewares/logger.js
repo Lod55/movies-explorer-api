@@ -1,5 +1,8 @@
 const expressWinston = require('express-winston');
-const { requestLoggerOptions, errorLoggerOptions } = require('../configs/loggerConfig');
+const {
+  requestLoggerOptions,
+  errorLoggerOptions,
+} = require('../configs/index');
 
 const requestLogger = expressWinston.logger(requestLoggerOptions);
 
