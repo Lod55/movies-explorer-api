@@ -4,6 +4,7 @@ const corsOptions = {
     'http://app-movies.lod55.nomoredomains.icu',
     'https://app-movies.lod55.nomoredomains.icu',
   ],
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   credentials: true,
 };
 

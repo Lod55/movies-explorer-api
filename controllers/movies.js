@@ -3,7 +3,7 @@ const User = require('../models/user');
 const CastError = require('../errors/cast-err');
 
 const getMovies = (req, res, next) => {
-  Movie.find({owner: req.user._id}, { __v: 0, createdAt: 0 })
+  Movie.find({ owner: req.user._id }, { __v: 0, createdAt: 0 })
     .populate('owner', { __v: 0, createdAt: 0 })
     .then((movies) => res.send(movies))
     .catch(next);
@@ -26,8 +26,8 @@ const createMovie = (req, res, next) => {
       owner = user;
 
       return Movie.findOne({ owner: req.user._id, movieId: data.movieId })
-        .then((movie) =>{
-          if(movie) {
+        .then((movie) => {
+          if (movie) {
             throw new CastError('Данный фильм уже добавлен!', 409);
           }
 
@@ -36,7 +36,7 @@ const createMovie = (req, res, next) => {
               res.status(201).send(newMovie);
             })
             .catch(next);
-        })
+        });
     })
     .catch(next);
 };
@@ -68,5 +68,5 @@ const deleteMovieById = (req, res, next) => {
 module.exports = {
   getMovies,
   createMovie,
-  deleteMovieById
+  deleteMovieById,
 };

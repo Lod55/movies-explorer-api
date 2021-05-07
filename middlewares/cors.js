@@ -1,5 +1,5 @@
 const cors = require('cors');
-const corsOptions = require('../configs/corsConfig')
+const corsOptions = require('../configs/corsConfig');
 
 const crossOrigin = cors(corsOptions);
 

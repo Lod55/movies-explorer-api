@@ -22,7 +22,7 @@ router.get('/check-auth', auth, successfulAuth);
 router.use('/users', auth, usersRouter);
 router.use('/movies', auth, moviesRouter);
 
-router.use('*', (res, req, next) => {
+router.use('*', auth, (res, req, next) => {
   const castError = new CastError('Данный запрос не найден', 404);
   next(castError);
 });

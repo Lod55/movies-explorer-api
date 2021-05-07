@@ -68,6 +68,6 @@ const movieSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-})
+});
 
 module.exports = model('movie', movieSchema);

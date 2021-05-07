@@ -17,4 +17,4 @@ const errorLoggerOptions = {
 module.exports = {
   requestLoggerOptions,
   errorLoggerOptions,
-}
+};

@@ -28,9 +28,9 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-})
+});
 
-userSchema.statics.findUserByCredentials = function(email, password) {
+userSchema.statics.findUserByCredentials = function authorization(email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
