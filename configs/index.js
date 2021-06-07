@@ -7,10 +7,7 @@ const {
 const corsOptions = require('./corsConfig');
 const dataBaseOptions = require('./databaseConfig');
 const limiterOptions = require('./limiterConfig');
-const {
-  requestLoggerOptions,
-  errorLoggerOptions,
-} = require('./loggerConfig');
+const { requestLoggerOptions, errorLoggerOptions } = require('./loggerConfig');
 
 module.exports = {
   dataBaseUrl,

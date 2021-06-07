@@ -1,11 +1,5 @@
-const {
-  Schema,
-  model,
-} = require('mongoose');
-const {
-  messages,
-  urlRegEx,
-} = require('../configs/index');
+const { Schema, model } = require('mongoose');
+const { messages, urlRegEx } = require('../configs/index');
 
 const movieSchema = new Schema({
   country: {

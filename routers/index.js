@@ -1,5 +1,4 @@
-const router = require('express')
-  .Router();
+const router = require('express').Router();
 const usersRouter = require('./users');
 const moviesRouter = require('./movies');
 const { NotFoundError } = require('../errors/index');
@@ -14,13 +13,13 @@ const {
   createUser,
   login,
   signOut,
-  successfulAuth,
+  checkAuth,
 } = require('../controllers/users.js');
 
 router.post('/signup', createUserValidator, createUser);
 router.post('/signin', loginValidator, login);
 router.delete('/signout', auth, signOut);
-router.get('/check-auth', auth, successfulAuth);
+router.get('/check-auth', auth, checkAuth);
 
 router.use('/users', auth, usersRouter);
 router.use('/movies', auth, moviesRouter);

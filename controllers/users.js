@@ -1,10 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const {
-  messages,
-  secretKey,
-} = require('../configs/index');
+const { messages, secretKey } = require('../configs/index');
 const {
   BadRequestError,
   NotFoundError,
@@ -19,17 +16,21 @@ const createUser = (req, res, next) => {
     throw new BadRequestError(messages.badRequest);
   }
 
-  bcrypt.hash(data.password, 10)
-    .then((hash) => User.create({
-      ...data,
-      password: hash,
-    }))
-    .then((user) => res.status(201)
-      .send({
+  bcrypt
+    .hash(data.password, 10)
+    .then((hash) =>
+      User.create({
+        ...data,
+        password: hash,
+      })
+    )
+    .then((user) =>
+      res.status(201).send({
         _id: user._id,
         name: user.name,
         email: user.email,
-      }))
+      })
+    )
     .catch((err) => {
       if (err.name === 'ValidationError') {
         const massage = `${Object.values(err.errors)
@@ -57,32 +58,26 @@ const login = (req, res, next) => {
 
   return User.findUserByCredentials(data.email, data.password)
     .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        secretKey,
-        { expiresIn: '24h' },
-      );
+      const token = jwt.sign({ _id: user._id }, secretKey, {
+        expiresIn: '24h',
+      });
 
-      res.cookie(
-        'jwt',
-        token,
-        {
+      res
+        .cookie('jwt', token, {
           maxAge: 3600000 * 24,
           httpOnly: true,
           sameSite: true,
-        },
-      )
+        })
         .send({ message: messages.authorization.successfully });
     })
     .catch(next);
 };
 
 const signOut = (req, res) => {
-  res.clearCookie('jwt')
-    .send({ message: messages.logout });
+  res.clearCookie('jwt').send({ message: messages.logout });
 };
 
-const successfulAuth = (req, res) => {
+const checkAuth = (req, res) => {
   res.send({ massege: messages.authorization.status.success });
 };
 
@@ -106,23 +101,18 @@ const updateUser = (req, res, next) => {
     throw new BadRequestError(messages.badRequest);
   }
 
-  User.findByIdAndUpdate(
-    req.user._id,
-    data,
-    {
-      new: true,
-      runValidators: true,
-    },
-  )
+  User.findByIdAndUpdate(req.user._id, data, {
+    new: true,
+    runValidators: true,
+  })
     .then((user) => {
       if (!user) {
         throw new NotFoundError(messages.user.notFound);
       }
-      res.status(201)
-        .send({
-          name: user.name,
-          email: user.email,
-        });
+      res.status(201).send({
+        name: user.name,
+        email: user.email,
+      });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -146,7 +136,7 @@ module.exports = {
   createUser,
   login,
   signOut,
-  successfulAuth,
+  checkAuth,
   getUser,
   updateUser,
 };

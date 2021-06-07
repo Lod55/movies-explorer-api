@@ -1,11 +1,11 @@
-const {
-  NODE_ENV,
-  DATABASE_URL,
-  JWT_SECRET,
-} = process.env;
+const { NODE_ENV, DATABASE_URL, JWT_SECRET } = process.env;
 
-const dataBaseUrl = NODE_ENV === 'production' ? DATABASE_URL : 'mongodb://localhost:27017/movie-explorer-db';
-const urlRegEx = /^(https?:\/\/)(www\.)?([\da-z-.]+)\.([a-z.]{2,6})[\da-zA-Z-._~:?#[\]@!$&'()*+,;=/]*\/?#?$/;
+const dataBaseUrl =
+  NODE_ENV === 'production'
+    ? DATABASE_URL
+    : 'mongodb://localhost:27017/movie-explorer-db';
+const urlRegEx =
+  /^(https?:\/\/)(www\.)?([\da-z-.]+)\.([a-z.]{2,6})[\da-zA-Z-._~:?#[\]@!$&'()*+,;=/]*\/?#?$/;
 const secretKey = NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret';
 
 const messages = {

@@ -1,13 +1,9 @@
-const {
-  getMovies,
-  createMovie,
-  deleteMovieById,
-} = require('./movies');
+const { getMovies, createMovie, deleteMovieById } = require('./movies');
 const {
   createUser,
   login,
   signOut,
-  successfulAuth,
+  checkAuth,
   getUser,
   updateUser,
 } = require('./users');
@@ -19,7 +15,7 @@ module.exports = {
   createUser,
   login,
   signOut,
-  successfulAuth,
+  checkAuth,
   getUser,
   updateUser,
 };

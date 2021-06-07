@@ -1,7 +1,4 @@
-const {
-  Schema,
-  model,
-} = require('mongoose');
+const { Schema, model } = require('mongoose');
 const { isEmail } = require('validator');
 const bcrypt = require('bcryptjs');
 const { messages } = require('../configs/index');
@@ -34,7 +31,10 @@ const userSchema = new Schema({
   },
 });
 
-userSchema.statics.findUserByCredentials = function authorization(email, password) {
+userSchema.statics.findUserByCredentials = function authorization(
+  email,
+  password
+) {
   return this.findOne({ email })
     .select('+password')
     .then((user) => {
@@ -42,14 +42,13 @@ userSchema.statics.findUserByCredentials = function authorization(email, passwor
         throw new UnauthorizedError(messages.authorization.badDate);
       }
 
-      return bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (!matched) {
-            throw new UnauthorizedError(messages.authorization.badDate);
-          }
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          throw new UnauthorizedError(messages.authorization.badDate);
+        }
 
-          return user;
-        });
+        return user;
+      });
     });
 };
 

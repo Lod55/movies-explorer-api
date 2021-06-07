@@ -9,10 +9,13 @@ const {
 const { messages } = require('../configs/index');
 
 const getMovies = (req, res, next) => {
-  Movie.find({ owner: req.user._id }, {
-    __v: 0,
-    createdAt: 0,
-  })
+  Movie.find(
+    { owner: req.user._id },
+    {
+      __v: 0,
+      createdAt: 0,
+    }
+  )
     .populate('owner', {
       __v: 0,
       createdAt: 0,
@@ -43,22 +46,20 @@ const createMovie = (req, res, next) => {
       return Movie.findOne({
         owner: req.user._id,
         movieId: data.movieId,
-      })
-        .then((movie) => {
-          if (movie) {
-            throw new ConflictError(messages.movie.conflict);
-          }
+      }).then((movie) => {
+        if (movie) {
+          throw new ConflictError(messages.movie.conflict);
+        }
 
-          return Movie.create({
-            ...data,
-            owner,
+        return Movie.create({
+          ...data,
+          owner,
+        })
+          .then((newMovie) => {
+            res.status(201).send(newMovie);
           })
-            .then((newMovie) => {
-              res.status(201)
-                .send(newMovie);
-            })
-            .catch(next);
-        });
+          .catch(next);
+      });
     })
     .catch(next);
 };

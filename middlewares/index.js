@@ -11,10 +11,7 @@ const auth = require('./auth');
 const corsOrigin = require('./cors');
 const errorHandler = require('./error-handler');
 const limiter = require('./limiter');
-const {
-  requestLogger,
-  errorLogger,
-} = require('./logger');
+const { requestLogger, errorLogger } = require('./logger');
 
 module.exports = {
   deleteMovieValidator,

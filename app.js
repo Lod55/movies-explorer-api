@@ -1,5 +1,4 @@
-require('dotenv')
-  .config();
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -8,10 +7,7 @@ const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 
 const router = require('./routers');
-const {
-  dataBaseUrl,
-  dataBaseOptions,
-} = require('./configs/index');
+const { dataBaseUrl, dataBaseOptions } = require('./configs/index');
 const {
   errorHandler,
   corsOrigin,
@@ -20,7 +16,7 @@ const {
   errorLogger,
 } = require('./middlewares/index');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3005 } = process.env;
 const app = express();
 
 try {
