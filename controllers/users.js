@@ -78,7 +78,7 @@ const signOut = (req, res) => {
 };
 
 const checkAuth = (req, res) => {
-  res.send({ massege: messages.authorization.status.success });
+  res.send({ message: messages.authorization.status.success });
 };
 
 const getUser = (req, res, next) => {
