@@ -26,7 +26,7 @@ const createUser = (req, res, next) => {
     )
     .then((user) =>
       res.status(201).send({
-        message: 'Регистрация прошла успешно!',
+        message: messages.user.success,
         _id: user._id,
         name: user.name,
         email: user.email,
@@ -111,7 +111,7 @@ const updateUser = (req, res, next) => {
         throw new NotFoundError(messages.user.notFound);
       }
       res.status(201).send({
-        message: 'Данные успешно обновлены!',
+        message: messages.user.update,
         name: user.name,
         email: user.email,
       });
