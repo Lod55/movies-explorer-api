@@ -26,7 +26,7 @@ const createUser = (req, res, next) => {
     )
     .then((user) =>
       res.status(201).send({
-        massage: 'Регистрация прошла успешно!',
+        message: 'Регистрация прошла успешно!',
         _id: user._id,
         name: user.name,
         email: user.email,
@@ -34,10 +34,10 @@ const createUser = (req, res, next) => {
     )
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        const massage = `${Object.values(err.errors)
+        const message = `${Object.values(err.errors)
           .map((el) => el.message)
           .join(', ')}`;
-        const errorCustom = new BadRequestError(massage);
+        const errorCustom = new BadRequestError(message);
         next(errorCustom);
       }
       if (err.name === 'MongoError' && err.code === 11000) {
@@ -111,17 +111,17 @@ const updateUser = (req, res, next) => {
         throw new NotFoundError(messages.user.notFound);
       }
       res.status(201).send({
-        massage: 'Данные успешно обновлены!',
+        message: 'Данные успешно обновлены!',
         name: user.name,
         email: user.email,
       });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        const massage = `${Object.values(err.errors)
+        const message = `${Object.values(err.errors)
           .map((el) => el.message)
           .join(', ')}`;
-        const errorCustom = new BadRequestError(massage);
+        const errorCustom = new BadRequestError(message);
         next(errorCustom);
       }
       if (err.name === 'MongoError' && err.code === 11000) {
