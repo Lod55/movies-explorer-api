@@ -3,7 +3,7 @@
 ## О API
 Diploma backend yandex
 
-## Демо
+## Демо (ВРЕМЕННО НЕ РАБОТАЕТ)
 
 - https://api.app-movies.lod55.nomoredomains.icu
 - http://api.app-movies.lod55.nomoredomains.icu
