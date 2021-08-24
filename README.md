@@ -3,12 +3,6 @@
 ## О API
 Diploma backend yandex
 
-## Демо (ВРЕМЕННО НЕ РАБОТАЕТ)
-
-- https://api.app-movies.lod55.nomoredomains.icu
-- http://api.app-movies.lod55.nomoredomains.icu
-- 84.201.135.44 (публичный IP адрес)
-
 ## Запуск проекта
 
 - `npm run start` — запускает сервер
